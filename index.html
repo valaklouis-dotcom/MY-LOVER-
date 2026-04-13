@@ -120,21 +120,21 @@ input {
 
 <!-- PAGE 5 -->
 <div class="page" id="p5">
-  <h1>Anh thích ăn gì nhất?</h1>
+  <h1>Món ăn yêu thích của anh là gì vậy ạ?</h1>
   <input id="q2">
   <br><button onclick="next('p6')">➡️</button>
 </div>
 
 <!-- PAGE 6 -->
 <div class="page" id="p6">
-  <h1>Anh đang muốn làm gì?</h1>
+  <h1>Bây giờ anh đang muốn làm gì nhất?</h1>
   <input id="q3">
   <br><button onclick="next('p7')">➡️</button>
 </div>
 
 <!-- PAGE 7 -->
 <div class="page" id="p7">
-  <h1>Anh thích quà gì nhất?</h1>
+  <h1>Anh thích được tặng quà gì nhất?</h1>
   <input id="q4">
   <br><button onclick="next('p8')">➡️</button>
 </div>
@@ -171,37 +171,92 @@ function next(id){
   runStory(id);
 }
 
-// ===== CHAT UI =====
+// ===== KHUNG CHAT =====
 let chatBox = document.createElement("div");
 chatBox.style.position="fixed";
 chatBox.style.bottom="20px";
 chatBox.style.left="50%";
 chatBox.style.transform="translateX(-50%)";
-chatBox.style.width="90%";
-chatBox.style.maxWidth="400px";
+chatBox.style.width="95%";
+chatBox.style.maxWidth="420px";
+chatBox.style.height="200px";
+chatBox.style.overflowY="auto";
+chatBox.style.padding="10px";
+chatBox.style.display="flex";
+chatBox.style.flexDirection="column";
+chatBox.style.gap="8px";
 chatBox.style.zIndex="9999";
+
 document.body.appendChild(chatBox);
 
-function addMessage(text, isDog=false){
-  let msg=document.createElement("div");
+// ===== TIN NHẮN =====
+function addMessage(text){
 
-  msg.style.margin="5px";
-  msg.style.padding="10px 15px";
-  msg.style.borderRadius="20px";
-  msg.style.maxWidth="70%";
-  msg.style.color="white";
-  msg.style.fontSize="14px";
+  // container
+  let row=document.createElement("div");
+  row.style.display="flex";
+  row.style.alignItems="flex-end";
+  row.style.gap="6px";
 
-  if(isDog){
-    msg.style.background="#ff85c1";
-    msg.style.marginLeft="auto";
-  }else{
-    msg.style.background="#ff4da6";
-    msg.style.marginRight="auto";
-  }
+  // avatar
+  let avatar=document.createElement("img");
+  avatar.src="https://i.pinimg.com/564x/6b/3a/76/6b3a76c89bb7c5c96d9d1c4c4d1c8b7c.jpg";
+  avatar.style.width="28px";
+  avatar.style.height="28px";
+  avatar.style.borderRadius="50%";
 
-  chatBox.appendChild(msg);
-  typeText(msg, text);
+  // bubble
+  let bubble=document.createElement("div");
+  bubble.style.background="#ff4da6";
+  bubble.style.color="white";
+  bubble.style.padding="10px 14px";
+  bubble.style.borderRadius="18px";
+  bubble.style.maxWidth="70%";
+  bubble.style.fontSize="14px";
+  bubble.style.opacity="0";
+  bubble.style.transform="translateY(10px)";
+
+  row.appendChild(avatar);
+  row.appendChild(bubble);
+  chatBox.appendChild(row);
+
+  // scroll mượt
+  chatBox.scrollTo({
+    top: chatBox.scrollHeight,
+    behavior: "smooth"
+  });
+
+  // animation xuất hiện
+  setTimeout(()=>{
+    bubble.style.transition="0.3s";
+    bubble.style.opacity="1";
+    bubble.style.transform="translateY(0)";
+  },50);
+
+  // typing effect
+  typeText(bubble, text);
+}
+
+// ===== HIỆU ỨNG ĐANG GÕ =====
+function showTyping(){
+  let typing=document.createElement("div");
+  typing.innerHTML="Đang nhập...";
+  typing.style.fontSize="12px";
+  typing.style.color="white";
+  typing.style.opacity="0.7";
+  typing.id="typing";
+
+  chatBox.appendChild(typing);
+
+  chatBox.scrollTo({
+    top: chatBox.scrollHeight,
+    behavior: "smooth"
+  });
+}
+
+function hideTyping(){
+  let t=document.getElementById("typing");
+  if(t) t.remove();
 }
 
 // ===== GÕ CHỮ =====
@@ -211,55 +266,75 @@ function typeText(el, text){
     el.innerHTML += text[i];
     i++;
     if(i>=text.length) clearInterval(typing);
-  },30);
+  },25);
 }
 
-// ===== STORY MÈO + CHÓ =====
+// ===== STORY 1 CHIỀU =====
 function runStory(page){
-  if(page==="p2"){
-    addMessage("Anh có thương em không 😏");
-    setTimeout(()=>addMessage("Trả lời nhanh đi 😤",true),1500);
-  }
 
-  if(page==="p3"){
-    addMessage("Hehe biết mà 😚");
-    setTimeout(()=>addMessage("Gâu gâu đồng ý luôn 🐶",true),1500);
-  }
+  showTyping();
 
-  if(page==="p4"){
-    addMessage("Viết cho em nghe đi 💖");
-  }
+  setTimeout(()=>{
+    hideTyping();
 
-  if(page==="p5"){
-    addMessage("Anh ăn gì vậy 😋");
-    setTimeout(()=>addMessage("Nhớ chia nha 😆",true),1500);
-  }
+    if(page==="p2"){
+      addMessage("Anh có thương em không? 😏");
+    }
 
-  if(page==="p8"){
-    addMessage("Nói nhẹ thôi nha 😢");
-    setTimeout(()=>addMessage("Đừng làm em buồn 😭",true),1500);
-  }
+    if(page==="p3"){
+      addMessage("Em biết mà 😚");
+    }
 
-  if(page==="p9"){
-    addMessage("Em thương anh nhiều lắm 💘");
-    setTimeout(()=>addMessage("Anh cũng vậy 🐶💖",true),1500);
-  }
+    if(page==="p4"){
+      addMessage("Dạo này anh thấy thế nào á 💖");
+    }
+
+    if(page==="p5"){
+      addMessage("Món ăn yêu thích của anh là gì vậy ạ 😋");
+    }
+
+    if(page==="p6"){
+      addMessage("Bây giờ anh đang muốn làm gì nhất 😏");
+    }
+
+    if(page==="p7"){
+      addMessage("Anh thích được tặng quà gì nhất 🎁");
+    }
+
+    if(page==="p8"){
+      addMessage("Có gì ở em làm anh cảm thấy buồn phiền không 😢");
+    }
+
+    if(page==="p9"){
+      addMessage("Em đã đọc hết rồi 💘");
+      setTimeout(()=>{
+        addMessage("Em thương anh nhiều lắm 💖");
+      },1500);
+    }
+
+  },1000);
 }
 
 // ===== TIM CLICK =====
 function shootHeart(x,y){
   let h=document.createElement("div");
   h.innerHTML=["💘","💖","💕"][Math.floor(Math.random()*3)];
+
   h.style.position="fixed";
   h.style.left=x+"px";
   h.style.top=y+"px";
   h.style.fontSize="20px";
+
   document.body.appendChild(h);
 
   let up=setInterval(()=>{
     let t=parseFloat(h.style.top);
     h.style.top=(t-5)+"px";
-    if(t<0){h.remove();clearInterval(up);}
+
+    if(t<0){
+      h.remove();
+      clearInterval(up);
+    }
   },30);
 }
 
@@ -267,7 +342,7 @@ document.addEventListener("click",e=>{
   shootHeart(e.clientX,e.clientY);
 });
 
-// ===== CUPID XỊN =====
+// ===== CUPID =====
 function createCupid(){
   let c=document.createElement("img");
   c.src="https://cdn-icons-png.flaticon.com/512/833/833472.png";
@@ -302,10 +377,10 @@ setInterval(createCupid,700);
 setInterval(()=>{
   let heart=document.createElement("div");
   heart.innerHTML=["💖","💘","💕"][Math.floor(Math.random()*3)];
+
   heart.style.position="fixed";
   heart.style.left=Math.random()*100+"vw";
   heart.style.top="-10px";
-  heart.style.fontSize=(15+Math.random()*20)+"px";
 
   document.body.appendChild(heart);
 
@@ -318,7 +393,7 @@ setInterval(()=>{
       clearInterval(fall);
     }
   },30);
-},120);
+},150);
 
 // ===== GOOGLE FORM =====
 const GOOGLE_FORM_ACTION="https://docs.google.com/forms/d/e/1FAIpQLSdYuCVEM7QCvCqjvtUc6SuVrNW1flerqN3PaKQ4poPHXj2uIA/formResponse";
