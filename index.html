@@ -154,65 +154,188 @@ input {
 
 <script>
 
-// chuyển trang
+// ===== CHUYỂN TRANG MƯỢT =====
 function next(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>{
+    p.style.opacity="0";
+    setTimeout(()=>p.classList.remove('active'),300);
+  });
+
+  setTimeout(()=>{
+    let page=document.getElementById(id);
+    page.classList.add('active');
+    page.style.opacity="0";
+    setTimeout(()=>page.style.opacity="1",50);
+  },300);
+
+  runStory(id);
 }
 
-// mèo nói
-function catTalk(t){
-  alert("🐱 "+t);
+// ===== CHAT UI =====
+let chatBox = document.createElement("div");
+chatBox.style.position="fixed";
+chatBox.style.bottom="20px";
+chatBox.style.left="50%";
+chatBox.style.transform="translateX(-50%)";
+chatBox.style.width="90%";
+chatBox.style.maxWidth="400px";
+chatBox.style.zIndex="9999";
+document.body.appendChild(chatBox);
+
+function addMessage(text, isDog=false){
+  let msg=document.createElement("div");
+
+  msg.style.margin="5px";
+  msg.style.padding="10px 15px";
+  msg.style.borderRadius="20px";
+  msg.style.maxWidth="70%";
+  msg.style.color="white";
+  msg.style.fontSize="14px";
+
+  if(isDog){
+    msg.style.background="#ff85c1";
+    msg.style.marginLeft="auto";
+  }else{
+    msg.style.background="#ff4da6";
+    msg.style.marginRight="auto";
+  }
+
+  chatBox.appendChild(msg);
+  typeText(msg, text);
 }
 
-// chó nói
-function dogTalk(t){
-  alert("🐶 "+t);
+// ===== GÕ CHỮ =====
+function typeText(el, text){
+  let i=0;
+  let typing=setInterval(()=>{
+    el.innerHTML += text[i];
+    i++;
+    if(i>=text.length) clearInterval(typing);
+  },30);
 }
 
-// cupid + tim
+// ===== STORY MÈO + CHÓ =====
+function runStory(page){
+  if(page==="p2"){
+    addMessage("Anh có thương em không 😏");
+    setTimeout(()=>addMessage("Trả lời nhanh đi 😤",true),1500);
+  }
+
+  if(page==="p3"){
+    addMessage("Hehe biết mà 😚");
+    setTimeout(()=>addMessage("Gâu gâu đồng ý luôn 🐶",true),1500);
+  }
+
+  if(page==="p4"){
+    addMessage("Viết cho em nghe đi 💖");
+  }
+
+  if(page==="p5"){
+    addMessage("Anh ăn gì vậy 😋");
+    setTimeout(()=>addMessage("Nhớ chia nha 😆",true),1500);
+  }
+
+  if(page==="p8"){
+    addMessage("Nói nhẹ thôi nha 😢");
+    setTimeout(()=>addMessage("Đừng làm em buồn 😭",true),1500);
+  }
+
+  if(page==="p9"){
+    addMessage("Em thương anh nhiều lắm 💘");
+    setTimeout(()=>addMessage("Anh cũng vậy 🐶💖",true),1500);
+  }
+}
+
+// ===== TIM CLICK =====
 function shootHeart(x,y){
   let h=document.createElement("div");
-  h.innerHTML="💘";
+  h.innerHTML=["💘","💖","💕"][Math.floor(Math.random()*3)];
   h.style.position="fixed";
   h.style.left=x+"px";
   h.style.top=y+"px";
+  h.style.fontSize="20px";
   document.body.appendChild(h);
-  setTimeout(()=>h.remove(),2000);
+
+  let up=setInterval(()=>{
+    let t=parseFloat(h.style.top);
+    h.style.top=(t-5)+"px";
+    if(t<0){h.remove();clearInterval(up);}
+  },30);
 }
 
-document.addEventListener("click",e=>shootHeart(e.clientX,e.clientY));
+document.addEventListener("click",e=>{
+  shootHeart(e.clientX,e.clientY);
+});
 
+// ===== CUPID XỊN =====
 function createCupid(){
   let c=document.createElement("img");
   c.src="https://cdn-icons-png.flaticon.com/512/833/833472.png";
+
   c.style.position="fixed";
-  c.style.left="-50px";
+  c.style.left="-60px";
   c.style.top=Math.random()*80+"vh";
-  c.style.width="50px";
+  c.style.width=(40+Math.random()*30)+"px";
+
   document.body.appendChild(c);
+
+  let speed=3+Math.random()*3;
 
   let move=setInterval(()=>{
     let l=parseFloat(c.style.left);
-    c.style.left=(l+3)+"px";
-    if(l>window.innerWidth){c.remove();clearInterval(move);}
+    c.style.left=(l+speed)+"px";
+
+    if(Math.random()<0.2){
+      shootHeart(l, parseFloat(c.style.top));
+    }
+
+    if(l>window.innerWidth){
+      c.remove();
+      clearInterval(move);
+    }
   },30);
 }
-setInterval(createCupid,1000);
 
-// gửi form
+setInterval(createCupid,700);
+
+// ===== TIM RƠI =====
+setInterval(()=>{
+  let heart=document.createElement("div");
+  heart.innerHTML=["💖","💘","💕"][Math.floor(Math.random()*3)];
+  heart.style.position="fixed";
+  heart.style.left=Math.random()*100+"vw";
+  heart.style.top="-10px";
+  heart.style.fontSize=(15+Math.random()*20)+"px";
+
+  document.body.appendChild(heart);
+
+  let fall=setInterval(()=>{
+    let t=parseFloat(heart.style.top||0);
+    heart.style.top=(t+3)+"px";
+
+    if(t>window.innerHeight){
+      heart.remove();
+      clearInterval(fall);
+    }
+  },30);
+},120);
+
+// ===== GOOGLE FORM =====
+const GOOGLE_FORM_ACTION="https://docs.google.com/forms/d/e/1FAIpQLSdYuCVEM7QCvCqjvtUc6SuVrNW1flerqN3PaKQ4poPHXj2uIA/formResponse";
+
 function sendAllData(){
-  let d=new FormData();
-  d.append("entry.137169317", q1.value);
-  d.append("entry.454111835", q2.value);
-  d.append("entry.1872124055", q3.value);
-  d.append("entry.669638336", q4.value);
-  d.append("entry.559059606", q5.value);
+  let data=new FormData();
 
-  fetch("https://docs.google.com/forms/d/e/1FAIpQLSdYuCVEM7QCvCqjvtUc6SuVrNW1flerqN3PaKQ4poPHXj2uIA/formResponse",{
+  data.append("entry.137169317", q1.value);
+  data.append("entry.454111835", q2.value);
+  data.append("entry.1872124055", q3.value);
+  data.append("entry.669638336", q4.value);
+  data.append("entry.559059606", q5.value);
+
+  fetch(GOOGLE_FORM_ACTION,{
     method:"POST",
     mode:"no-cors",
-    body:d
+    body:data
   });
 }
 
